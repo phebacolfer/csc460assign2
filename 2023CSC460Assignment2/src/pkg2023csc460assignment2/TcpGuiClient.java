@@ -227,40 +227,34 @@ public class TcpGuiClient extends JPanel {
 
         byte[] id;
         byte[] password;
-        byte[] id_len = new byte[2];
-        byte[] pw_len = new byte[2];
+        ByteBuffer id_len = ByteBuffer.allocate(2);
+        ByteBuffer pw_len = ByteBuffer.allocate(2);
+        id_len.order( ByteOrder.BIG_ENDIAN);
+        pw_len.order( ByteOrder.BIG_ENDIAN);
 
         try {
             id = username.getBytes("UTF-8");
-            password = pass.getBytes();
+            password = pass.getBytes("UTF-8");
             int int_id_len = id.length;
-            String hex_id_len = Integer.toHexString(int_id_len);
-            id_len = hex_id_len.getBytes("UTF-8");
+            id_len.putShort(int_id_len);
             int int_pw_len = password.length;
-            String hex_pw_len = Integer.toHexString(int_pw_len);
-            pw_len = (hex_pw_len.getBytes("UTF-8"));
+            pw_len.putShort(int_pw_len);
         } catch (UnsupportedEncodingException e) {
             return;
         }
 
         ByteBuffer b = ByteBuffer.allocate(2+id.length+password.length+4); 
-        System.out.println("made it to concat");
-        b.putInt(0x10);
-        System.out.println("0x10");
+        b.put( (byte) 0x10 );
         b.put(id_len);
-        System.out.println(new String(id_len, StandardCharsets.UTF_8));
         b.put(id);
-        System.out.println(new String(id, StandardCharsets.UTF_8));
         b.put(pw_len);
-        System.out.println(new String(pw_len, StandardCharsets.UTF_8));
         b.put(password);
-        System.out.println(new String(password, StandardCharsets.UTF_8));
-        byte[] protocol_byte = new byte[b.remaining()];
-        b.get(protocol_byte);
+        byte[] protocol_byte = b.array();
         byte[] result;
         try {
             rawout.write(protocol_byte);
             int rlen = rawin.read( result, 0, 65535 );
+            //get resulting byte array as string?
             String result_string = new String( result, 0, rlen, "UTF-8" );
             
         } catch ( IOException e ) {
