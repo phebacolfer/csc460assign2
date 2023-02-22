@@ -3,6 +3,7 @@ import java.io.*;
 import java.lang.Thread;
 import java.util.Enumeration;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class TcpServer {
     public static void main(String[] args) throws IOException {
@@ -83,7 +84,7 @@ class TcpServerThread extends Thread {
 		clientNumber = cno;				// remember who this client is
     }
 
-    public void run() {
+    public void login() {
 		try {
 			InputStream in = socket.getInputStream();
 			OutputStream out = socket.getOutputStream();
@@ -115,4 +116,18 @@ class TcpServerThread extends Thread {
 		}
 		System.out.println("Thread exiting, client " + clientNumber);
 	}
+    
+    public int displayCurMembs(int chatNum) {return 1;}
+    
+    public void sendWelcome(){}
+    
+    public void userJoined(){}
+    
+    public void userLeft(){}
+    
+    public void cantJoin(){}
+    
+    public void invalidChatroom(){}
+    
+    
 }
